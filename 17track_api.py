@@ -3,34 +3,21 @@ import requests
 import json
 import time
 
-TOKEN = "YOUR_17TRACK_API_KEY"  # 替换为你的 token
-HEADERS = {
-    "Content-Type": "application/json",
-    "17token": TOKEN
-}
+TOKEN = "YOUR_17TRACK_API_KEY"
+HEADERS = {"Content-Type": "application/json", "17token": TOKEN}
 
 def fetch_tracking_data(tracking_number):
-    requests.post(
-        "https://api.17track.net/track/v2/register",
-        headers=HEADERS,
-        json={"nums": [tracking_number]}
-    )
+    requests.post("https://api.17track.net/track/v2/register", headers=HEADERS, json={"nums": [tracking_number]})
     time.sleep(2)
-    res = requests.post(
-        "https://api.17track.net/track/v2/gettrackinfo",
-        headers=HEADERS,
-        json={"nums": [tracking_number]}
-    )
+    res = requests.post("https://api.17track.net/track/v2/gettrackinfo", headers=HEADERS, json={"nums": [tracking_number]})
     data = res.json()
     try:
         info = data["data"]["items"][0]
-        events = []
-        for e in info.get("origin_info", {}).get("trackinfo", []):
-            events.append({
-                "time": e.get("Date", ""),
-                "location": e.get("Location", ""),
-                "status": e.get("StatusDescription", "")
-            })
+        events = [{
+            "time": e.get("Date", ""),
+            "location": e.get("Location", ""),
+            "status": e.get("StatusDescription", "")
+        } for e in info.get("origin_info", {}).get("trackinfo", [])]
         result = {
             "tracking_id": info.get("number", ""),
             "status": info.get("lastEvent", "In transit"),
