@@ -1,0 +1,28 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #f6f8fa;
+  color: #333;
+  padding: 20px;
+}
+.container {
+  max-width: 800px;
+  margin: auto;
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+}
+ul.timeline {
+  list-style: none;
+  padding: 0;
+}
+ul.timeline li {
+  margin-bottom: 15px;
+  border-left: 3px solid #3b82f6;
+  padding-left: 10px;
+}
+.time {
+  font-weight: bold;
+}
+.status {
+  color: #22c55e;
+}

@@ -1,0 +1,11 @@
+{
+  "tracking_id": "TBA321632211637",
+  "status": "Delivered",
+  "carrier": "Amazon Logistics",
+  "destination": "Los Angeles, CA",
+  "delivered_at": "2025-06-17 09:12",
+  "events": [
+    {"time": "2025-06-17 09:12", "location": "Los Angeles", "status": "Delivered"},
+    {"time": "2025-06-16 14:52", "location": "LA DC", "status": "Out for delivery"}
+  ]
+}

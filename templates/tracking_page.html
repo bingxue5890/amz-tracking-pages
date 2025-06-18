@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tracking: {{ tracking_id }}</title>
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Tracking Number: {{ tracking_id }}</h1>
+    <p>Status: <strong>{{ status }}</strong></p>
+    <p>Carrier: {{ carrier }}</p>
+    <p>Destination: {{ destination }}</p>
+    <p>Delivered At: {{ delivered_at }}</p>
+
+    <h2>Tracking History</h2>
+    <ul class="timeline">
+      {% for event in events %}
+      <li>
+        <div class="time">{{ event.time }}</div>
+        <div class="location">{{ event.location }}</div>
+        <div class="status">{{ event.status }}</div>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</body>
+</html>

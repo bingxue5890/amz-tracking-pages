@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>AMZ Tracking</title>
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>🚚 Amazon 轨迹展示系统</h1>
+    <input type="text" id="search" placeholder="请输入单号搜索..." onkeyup="searchList()" />
+    <ul id="trackingList">
+      {% for t in tracking_files %}
+        <li><a href="./{{ t }}.html">{{ t }}</a></li>
+      {% endfor %}
+    </ul>
+  </div>
+  <script>
+    function searchList() {
+      const input = document.getElementById("search").value.toLowerCase();
+      document.querySelectorAll("#trackingList li").forEach(li => {
+        li.style.display = li.textContent.toLowerCase().includes(input) ? "" : "none";
+      });
+    }
+  </script>
+</body>
+</html>
