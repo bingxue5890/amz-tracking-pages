@@ -3,22 +3,19 @@ import requests
 import json
 import time
 
-TOKEN = "YOUR_17TRACK_API_KEY"  # 🔁 替换为你的 token
+TOKEN = "YOUR_17TRACK_API_KEY"  # 替换为你的 token
 HEADERS = {
     "Content-Type": "application/json",
     "17token": TOKEN
 }
 
 def fetch_tracking_data(tracking_number):
-    # 注册单号（确保17track开始查询）
     requests.post(
         "https://api.17track.net/track/v2/register",
         headers=HEADERS,
         json={"nums": [tracking_number]}
     )
-    time.sleep(2)  # 等待轨迹刷新
-
-    # 查询轨迹数据
+    time.sleep(2)
     res = requests.post(
         "https://api.17track.net/track/v2/gettrackinfo",
         headers=HEADERS,
@@ -49,7 +46,6 @@ def fetch_tracking_data(tracking_number):
         print("❌ 抓取失败：", e)
 
 if __name__ == "__main__":
-    # 👇 修改为你要抓的单号列表
     nums = ["TBA321632211637"]
     for num in nums:
         fetch_tracking_data(num)

@@ -1,3 +1,4 @@
+
 import os
 import json
 from jinja2 import Environment, FileSystemLoader
@@ -7,7 +8,6 @@ tracking_tpl = env.get_template('tracking_page.html')
 index_tpl = env.get_template('index.html')
 
 os.makedirs('tracking_pages', exist_ok=True)
-
 tracking_ids = []
 
 for file in os.listdir('data'):
@@ -27,7 +27,6 @@ for file in os.listdir('data'):
             out.write(html)
         tracking_ids.append(tracking_id)
 
-# 生成首页
 index_html = index_tpl.render(tracking_files=tracking_ids)
 with open('tracking_pages/index.html', 'w', encoding='utf-8') as f:
     f.write(index_html)
