@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Amazon 轨迹展示系统</title>
+    <!-- 引入字体图标（可选，用亚马逊风格的图标） -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    <style>
+        /* 全局样式重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Amazon Ember", Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        /* 标题与搜索栏 */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #fff;
+            padding: 15px 20px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+
+        .header h1 i {
+            color: #f90; /* 亚马逊橙色调 */
+            margin-right: 8px;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+        }
+
+        .search-box input {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px 0 0 4px;
+            outline: none;
+            width: 250px;
+        }
+
+        .search-box button {
+            padding: 8px 16px;
+            border: none;
+            background-color: #f90;
+            color: #fff;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .search-box button:hover {
+            background-color: #e88f00;
+        }
+
+        /* 物流单号列表 */
+        .tracking-list {
+            background-color: #fff;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+
+        .tracking-list ul {
+            list-style: none;
+        }
+
+        .tracking-list li {
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tracking-list li:last-child {
+            border-bottom: none;
+        }
+
+        .tracking-list a {
+            color: #0066c0; /* 亚马逊链接蓝 */
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .tracking-list a:hover {
+            color: #c45500;
+        }
+
+        /* 响应式适配 */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .search-box {
+                margin-top: 10px;
+            }
+            .tracking-list li {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 标题与搜索栏 -->
+        <div class="header">
+            <h1><i class="fa fa-truck"></i>Amazon 轨迹展示系统</h1>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="请输入单号搜索..." />
+                <button id="searchBtn">搜索</button>
+            </div>
+        </div>
+
+        <!-- 物流单号列表 -->
+        <div class="tracking-list" id="trackingList">
+            <ul>
+                <!-- 这里通过 JavaScript 动态加载数据 -->
+                <li><a href="tracking.html?tba=TBA321632211637">TBA321632211637</a></li>
+                <!-- 可继续添加更多单号 -->
+            </ul>
+        </div>
+    </div>
+
+    <!-- 数据加载与搜索逻辑 -->
+    <script>
+        // 模拟从 JSON 文件加载数据（实际可通过 fetch 或后端渲染）
+        const mockData = [
+            { tba: "TBA321632211637", status: "配送中" },
+            { tba: "TBA123456789012", status: "已签收" },
+            { tba: "TBA987654321098", status: "运输中" }
+        ];
+
+        // 页面加载后渲染列表
+        window.onload = function() {
+            renderTrackingList(mockData);
+        };
+
+        // 渲染物流单号列表
+        function renderTrackingList(data) {
+            const list = document.querySelector(".tracking-list ul");
+            list.innerHTML = ""; // 清空原有内容
+            data.forEach(item => {
+                const li = document.createElement("li");
+                li.innerHTML = `<a href="tracking.html?tba=${item.tba}">${item.tba}</a> 
+                                <span style="color: #999;">状态：${item.status}</span>`;
+                list.appendChild(li);
+            });
+        }
+
+        // 搜索功能
+        document.getElementById("searchBtn").addEventListener("click", function() {
+            const searchText = document.getElementById("searchInput").value.trim().toUpperCase();
+            const filtered = mockData.filter(item => 
+                item.tba.includes(searchText)
+            );
+            renderTrackingList(filtered);
+        });
+
+        // 支持回车搜索
+        document.getElementById("searchInput").addEventListener("keyup", function(e) {
+            if (e.key === "Enter") {
+                document.getElementById("searchBtn").click();
+            }
+        });
+    </script>
+</body>
+</html>
