@@ -1,0 +1,39 @@
+{
+    "tracking_id": "TBA123456789",
+    "status": "已签收",
+    "expected_delivery": "2023年6月15日 星期四",
+    "destination": "北京市朝阳区",
+    "shipping_date": "2023年6月10日",
+    "tracking_events": [
+        {
+            "time": "2023年6月15日 10:30",
+            "status": "已签收",
+            "location": "北京市朝阳区配送中心",
+            "description": "包裹已由收件人签收"
+        },
+        {
+            "time": "2023年6月15日 08:45",
+            "status": "配送中",
+            "location": "北京市朝阳区配送中心",
+            "description": "包裹正在派送给收件人"
+        },
+        {
+            "time": "2023年6月14日 16:30",
+            "status": "已发货",
+            "location": "上海市浦东新区分拣中心",
+            "description": "包裹已从分拣中心发出，正在发往北京市"
+        },
+        {
+            "time": "2023年6月11日 09:15",
+            "status": "已发货",
+            "location": "广东省深圳市仓库",
+            "description": "包裹已出库，正在发往上海市分拣中心"
+        },
+        {
+            "time": "2023年6月10日 14:30",
+            "status": "已下单",
+            "location": "广东省深圳市仓库",
+            "description": "订单已确认，正在准备发货"
+        }
+    ]
+}

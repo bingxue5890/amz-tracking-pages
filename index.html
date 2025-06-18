@@ -52,34 +52,34 @@
         </div>
 
         <div class="logistics-container" id="logistics-container">
-            {% for item in logistics %}
-            <div class="logistics-card" data-tracking-id="{{ item.tracking_id }}" data-status="{{ item.status }}">
+            
+            <div class="logistics-card" data-tracking-id="TBA123456789" data-status="已签收">
                 <div class="card-header">
                     <h3>物流单号</h3>
-                    <p class="tracking-id">{{ item.tracking_id }}</p>
+                    <p class="tracking-id">TBA123456789</p>
                 </div>
                 <div class="card-body">
-                    <div class="status-tag {{ 'status-delivered' if item.status == '已签收' else 'status-shipping' if item.status == '配送中' else 'status-dispatched' if item.status == '已发货' else 'status-pending' }}">
-                        {{ item.status }}
+                    <div class="status-tag status-delivered">
+                        已签收
                     </div>
                     <div class="delivery-info">
                         <div class="info-item">
                             <span class="info-label">预计送达:</span>
-                            <span class="info-value">{{ item.expected_delivery }}</span>
+                            <span class="info-value">2023年6月15日 星期四</span>
                         </div>
                         <div class="info-item">
                             <span class="info-label">目的地:</span>
-                            <span class="info-value">{{ item.destination }}</span>
+                            <span class="info-value">北京市朝阳区</span>
                         </div>
                     </div>
                 </div>
                 <div class="card-footer">
-                    <a href="{{ item.tracking_id.replace('/', '_') }}.html" class="view-details-btn">
+                    <a href="TBA123456789.html" class="view-details-btn">
                         <i class="fa fa-eye" aria-hidden="true"></i> 查看详情
                     </a>
                 </div>
             </div>
-            {% endfor %}
+            
         </div>
 
         <div id="no-results" class="no-results hidden">
