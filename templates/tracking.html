@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>物流轨迹详情</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Amazon Ember", Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background-color: #fff;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card h2 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .card h2 i {
+            color: #f90;
+            margin-right: 8px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: #666;
+            min-width: 120px;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 40px;
+            margin-top: 20px;
+        }
+
+        .timeline::before {
+            content: "";
+            position: absolute;
+            left: 12px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background-color: #ddd;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding: 15px 0 15px 20px;
+            margin-bottom: 10px;
+        }
+
+        .timeline-item::before {
+            content: "";
+            position: absolute;
+            left: 7px;
+            top: 20px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #f90;
+            border: 2px solid #fff;
+            box-shadow: 0 0 0 2px #eee;
+        }
+
+        .timeline-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .event-time {
+            color: #999;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .event-desc {
+            font-weight: 500;
+            margin-bottom: 3px;
+        }
+
+        .event-location {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin: 20px 0;
+            padding: 8px 16px;
+            background-color: #f90;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .back-btn:hover {
+            background-color: #e88f00;
+        }
+
+        @media (max-width: 768px) {
+            .info-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .info-label {
+                margin-bottom: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-btn"><i class="fa fa-arrow-left"></i> 返回列表</a>
+
+        <div class="card">
+            <h2><i class="fa fa-map"></i>物流轨迹详情</h2>
+            <div class="info-row">
+                <span class="info-label">物流单号：</span>
+                <span id="tba">TBA321632211637</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">当前状态：</span>
+                <span id="status" style="color: #008000;">配送中</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">预计送达：</span>
+                <span id="eta">2025-06-20</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2><i class="fa fa-clock"></i>轨迹时间轴</h2>
+            <div class="timeline" id="timeline">
+                <!-- 这里通过 JavaScript 动态加载轨迹数据 -->
+                <div class="timeline-item">
+                    <div class="event-time">2025-06-18 10:00</div>
+                    <div class="event-desc">包裹已揽收</div>
+                    <div class="event-location">深圳仓库</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="event-time">2025-06-19 08:00</div>
+                    <div class="event-desc">离开中转中心</div>
+                    <div class="event-location">广州分拣中心</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="event-time">2025-06-19 14:00</div>
+                    <div class="event-desc">到达配送站</div>
+                    <div class="event-location">上海徐汇配送站</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 从 URL 获取单号参数
+        const urlParams = new URLSearchParams(window.location.search);
+        const tba = urlParams.get("tba") || "TBA321632211637";
+
+        // 模拟从 JSON 文件加载轨迹数据（实际可替换为 fetch 逻辑）
+        const mockTrackingData = {
+            tba: tba,
+            status: "配送中",
+            eta: "2025-06-20",
+            timeline: [
+                { time: "2025-06-18 10:00", desc: "包裹已揽收", location: "深圳仓库" },
+                { time: "2025-06-19 08:00", desc: "离开中转中心", location: "广州分拣中心" },
+                { time: "2025-06-19 14:00", desc: "到达配送站", location: "上海徐汇配送站" },
+                { time: "2025-06-20 09:00", desc: "正在配送中", location: "上海徐汇区" }
+            ]
+        };
+
+        // 渲染页面数据
+        window.onload = function() {
+            document.getElementById("tba").innerText = mockTrackingData.tba;
+            document.getElementById("status").innerText = mockTrackingData.status;
+            document.getElementById("eta").innerText = mockTrackingData.eta;
+            
+            const timelineDom = document.getElementById("timeline");
+            timelineDom.innerHTML = ""; // 清空原有内容
+            mockTrackingData.timeline.forEach(event => {
+                const item = document.createElement("div");
+                item.className = "timeline-item";
+                item.innerHTML = `
+                    <div class="event-time">${event.time}</div>
+                    <div class="event-desc">${event.desc}</div>
+                    <div class="event-location">${event.location}</div>
+                `;
+                timelineDom.appendChild(item);
+            });
+        };
+    </script>
+</body>
+</html>
