@@ -3,24 +3,29 @@
 <html lang="zh">
 <head>
   <meta charset="UTF-8" />
-  <title>Amazon 轨迹展示系统</title>
+  <title>Amazon 物流追踪</title>
   <link rel="stylesheet" href="static/css/style.css?v=2" />
 </head>
 <body>
   <div class="container">
-    <h1>🚚 Amazon 轨迹展示系统</h1>
-    <input type="text" id="search" placeholder="请输入单号搜索..." onkeyup="searchList()" />
-    <ul id="trackingList">
-      {% for t in tracking_files %}
-        <li><a href="./{{ t }}.html">{{ t }}</a></li>
+    <h1>📦 Amazon 物流追踪中心</h1>
+    <input type="text" id="search" placeholder="搜索物流单号..." onkeyup="searchList()" />
+    <div class="cards" id="trackingList">
+      {% for t in tracking_cards %}
+      <div class="card">
+        <div class="card-title">{{ t.tracking_id }}</div>
+        <div class="card-status">{{ t.status }}</div>
+        <div class="card-time">到货时间：{{ t.delivered_at }}</div>
+        <a class="card-button" href="./{{ t.tracking_id }}.html">查看详情</a>
+      </div>
       {% endfor %}
-    </ul>
+    </div>
   </div>
   <script>
     function searchList() {
-      const input = document.getElementById("search").value.toLowerCase();
-      document.querySelectorAll("#trackingList li").forEach(li => {
-        li.style.display = li.textContent.toLowerCase().includes(input) ? "" : "none";
+      const val = document.getElementById("search").value.toLowerCase();
+      document.querySelectorAll(".card").forEach(card => {
+        card.style.display = card.innerText.toLowerCase().includes(val) ? "" : "none";
       });
     }
   </script>
