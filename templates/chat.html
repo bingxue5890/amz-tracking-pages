@@ -1,213 +1,140 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>聊天室 - Amazon TBA 查询</title>
+    <title>聊天室 - Temu Tracker</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
+            height: 100vh;
             margin: 0;
-            padding: 0;
-            min-height: 100vh;
-            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-        }
-
-        .chat-container {
-            max-width: 1000px;
-            margin: 20px auto;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             display: flex;
             flex-direction: column;
-            height: calc(100vh - 40px);
         }
-
-        .chat-header {
-            padding: 20px;
-            border-bottom: 1px solid #eee;
+        .chat-container {
+            flex: 1;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+            width: 100%;
         }
-
-        .chat-header h1 {
-            margin: 0;
-            color: #1a73e8;
-            font-size: 24px;
-        }
-
-        .online-users {
-            color: #666;
-        }
-
         .chat-messages {
             flex: 1;
-            padding: 20px;
             overflow-y: auto;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 1rem;
         }
-
         .message {
-            margin-bottom: 20px;
-            display: flex;
-            align-items: flex-start;
-        }
-
-        .message.sent {
-            flex-direction: row-reverse;
-        }
-
-        .message-content {
-            background: #f1f3f4;
-            padding: 10px 15px;
-            border-radius: 15px;
+            margin-bottom: 1rem;
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
             max-width: 70%;
-            margin: 0 10px;
         }
-
-        .message.sent .message-content {
-            background: #1a73e8;
+        .message.sent {
+            background: #007bff;
             color: white;
+            margin-left: auto;
         }
-
-        .message-meta {
-            font-size: 12px;
-            color: #666;
-            margin-top: 5px;
+        .message.received {
+            background: white;
+            border: 1px solid #dee2e6;
         }
-
+        .message .username {
+            font-size: 0.8rem;
+            margin-bottom: 0.2rem;
+            opacity: 0.8;
+        }
         .chat-input {
-            padding: 20px;
-            border-top: 1px solid #eee;
             display: flex;
-            gap: 10px;
+            gap: 1rem;
+            padding: 1rem;
+            background: white;
+            border-top: 1px solid #dee2e6;
         }
-
-        .chat-input textarea {
+        .chat-input input {
             flex: 1;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            resize: none;
-            height: 40px;
-            font-family: inherit;
-            font-size: 14px;
         }
-
-        .chat-input button {
-            padding: 0 20px;
-            background: #1a73e8;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .chat-input button:hover {
-            background: #1557b0;
-        }
-
-        .back-button {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            padding: 8px 16px;
-            background: #1a73e8;
-            color: white;
-            text-decoration: none;
-            border-radius: 20px;
-            font-size: 14px;
-            transition: background-color 0.3s;
-        }
-
-        .back-button:hover {
-            background: #1557b0;
+        .navbar {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
         }
     </style>
 </head>
 <body>
-    <a href="/" class="back-button">返回首页</a>
-    
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">Temu Tracker</a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="{{ url_for('logout') }}">退出登录</a>
+            </div>
+        </div>
+    </nav>
+
     <div class="chat-container">
-        <div class="chat-header">
-            <h1>聊天室</h1>
-            <div class="online-users">在线用户：<span id="online-count">0</span></div>
-        </div>
-        
         <div class="chat-messages" id="chat-messages">
-            <!-- 消息将通过JavaScript动态添加 -->
+            <!-- 消息将在这里动态添加 -->
         </div>
-        
         <div class="chat-input">
-            <textarea 
-                id="message-input" 
-                placeholder="输入消息..." 
-                onkeydown="if(event.keyCode === 13 && !event.shiftKey) { event.preventDefault(); sendMessage(); }">
-            </textarea>
-            <button onclick="sendMessage()">发送</button>
+            <input type="text" class="form-control" id="message-input" placeholder="输入消息...">
+            <button class="btn btn-primary" onclick="sendMessage()">发送</button>
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
     <script>
         const socket = io();
-        const messagesContainer = document.getElementById('chat-messages');
+        const messagesDiv = document.getElementById('chat-messages');
         const messageInput = document.getElementById('message-input');
-        const onlineCount = document.getElementById('online-count');
 
-        // 连接到服务器
         socket.on('connect', () => {
             console.log('Connected to server');
         });
 
-        // 接收在线用户数量更新
-        socket.on('online_users', (count) => {
-            onlineCount.textContent = count;
-        });
-
-        // 接收新消息
         socket.on('message', (data) => {
-            addMessage(data, false);
+            addMessage(data.username, data.message, false);
         });
-
-        function addMessage(data, isSent) {
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${isSent ? 'sent' : ''}`;
-            
-            messageDiv.innerHTML = `
-                <div class="message-content">
-                    <div>${data.message}</div>
-                    <div class="message-meta">
-                        ${data.username} - ${new Date().toLocaleTimeString()}
-                    </div>
-                </div>
-            `;
-            
-            messagesContainer.appendChild(messageDiv);
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        }
 
         function sendMessage() {
             const message = messageInput.value.trim();
-            if (!message) return;
-
-            // 发送消息到服务器
-            socket.emit('message', {
-                message: message,
-                username: 'User' // 这里应该使用实际的用户名
-            });
-
-            // 在本地添加消息
-            addMessage({
-                message: message,
-                username: 'You'
-            }, true);
-
-            // 清空输入框
-            messageInput.value = '';
+            if (message) {
+                socket.emit('message', { message: message });
+                addMessage('You', message, true);
+                messageInput.value = '';
+            }
         }
+
+        function addMessage(username, message, sent) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sent ? 'sent' : 'received'}`;
+            
+            const usernameDiv = document.createElement('div');
+            usernameDiv.className = 'username';
+            usernameDiv.textContent = username;
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'content';
+            contentDiv.textContent = message;
+            
+            messageDiv.appendChild(usernameDiv);
+            messageDiv.appendChild(contentDiv);
+            messagesDiv.appendChild(messageDiv);
+            
+            // 滚动到最新消息
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        // 按回车发送消息
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html> 

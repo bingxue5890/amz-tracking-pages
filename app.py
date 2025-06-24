@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template, send_from_directory, session, redirect, url_for
+from flask import Flask, request, jsonify, render_template, send_from_directory, session, redirect, url_for, flash
 from flask_socketio import SocketIO, emit
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
@@ -51,40 +51,48 @@ def index():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if request.method == 'GET':
-        return render_template('login.html')
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
     
-    data = request.get_json()
-    user = User.query.filter_by(username=data.get('username')).first()
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        user = User.query.filter_by(username=username).first()
+        
+        if user and user.check_password(password):
+            login_user(user)
+            return redirect(url_for('index'))
+        else:
+            flash('用户名或密码错误')
     
-    if user and user.check_password(data.get('password')):
-        login_user(user)
-        return jsonify({'success': True})
-    
-    return jsonify({'success': False, 'error': '用户名或密码错误'})
+    return render_template('login.html')
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    if request.method == 'GET':
-        return render_template('register.html')
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
     
-    data = request.get_json()
-    username = data.get('username')
-    email = data.get('email')
-    password = data.get('password')
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        confirm_password = request.form.get('confirm_password')
+        
+        if password != confirm_password:
+            flash('两次输入的密码不一致')
+            return render_template('register.html')
+        
+        if User.query.filter_by(username=username).first():
+            flash('用户名已存在')
+            return render_template('register.html')
+        
+        user = User(username=username)
+        user.set_password(password)
+        db.session.add(user)
+        db.session.commit()
+        
+        return redirect(url_for('login'))
     
-    if User.query.filter_by(username=username).first():
-        return jsonify({'success': False, 'error': '用户名已存在'})
-    
-    if User.query.filter_by(email=email).first():
-        return jsonify({'success': False, 'error': '邮箱已被注册'})
-    
-    user = User(username=username, email=email)
-    user.set_password(password)
-    db.session.add(user)
-    db.session.commit()
-    
-    return jsonify({'success': True})
+    return render_template('register.html')
 
 @app.route('/logout')
 @login_required
