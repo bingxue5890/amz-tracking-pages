@@ -7,8 +7,13 @@ import os
 import logging
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'your-secret-key'  # 请更改为随机的密钥
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
+
+# 确保instance目录存在
+if not os.path.exists('instance'):
+    os.makedirs('instance')
+
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your-secret-key')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///instance/users.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # 配置日志
