@@ -5,13 +5,17 @@ services:
     pythonVersion: "3.9"
     plan: free
     buildCommand: "pip install -r requirements.txt"
-    startCommand: "gunicorn -c gunicorn_config.py app:app"
+    startCommand: "gunicorn -c gunicorn_config.py --worker-class eventlet app:app"
     healthCheckPath: /
     envVars:
       - key: PYTHON_VERSION
         value: 3.9
       - key: FLASK_ENV
         value: production
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        value: sqlite:///users.db
     autoDeploy: true
  
  
