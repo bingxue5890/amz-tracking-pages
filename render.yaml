@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: temu-tracker
+    env: python
+    pythonVersion: "3.9"
+    plan: free
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn -c gunicorn_config.py app:app"
+    healthCheckPath: /
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.9
+      - key: FLASK_ENV
+        value: production
+    autoDeploy: true
+ 
+ 
+ 
+ 
+ 
+ 
+ 
