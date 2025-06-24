@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>聊天室 - Amazon TBA 查询</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        .chat-container {
+            max-width: 1000px;
+            margin: 20px auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 40px);
+        }
+
+        .chat-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-header h1 {
+            margin: 0;
+            color: #1a73e8;
+            font-size: 24px;
+        }
+
+        .online-users {
+            color: #666;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .message {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .message.sent {
+            flex-direction: row-reverse;
+        }
+
+        .message-content {
+            background: #f1f3f4;
+            padding: 10px 15px;
+            border-radius: 15px;
+            max-width: 70%;
+            margin: 0 10px;
+        }
+
+        .message.sent .message-content {
+            background: #1a73e8;
+            color: white;
+        }
+
+        .message-meta {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .chat-input {
+            padding: 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input textarea {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            resize: none;
+            height: 40px;
+            font-family: inherit;
+            font-size: 14px;
+        }
+
+        .chat-input button {
+            padding: 0 20px;
+            background: #1a73e8;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .chat-input button:hover {
+            background: #1557b0;
+        }
+
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 8px 16px;
+            background: #1a73e8;
+            color: white;
+            text-decoration: none;
+            border-radius: 20px;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        .back-button:hover {
+            background: #1557b0;
+        }
+    </style>
+</head>
+<body>
+    <a href="/" class="back-button">返回首页</a>
+    
+    <div class="chat-container">
+        <div class="chat-header">
+            <h1>聊天室</h1>
+            <div class="online-users">在线用户：<span id="online-count">0</span></div>
+        </div>
+        
+        <div class="chat-messages" id="chat-messages">
+            <!-- 消息将通过JavaScript动态添加 -->
+        </div>
+        
+        <div class="chat-input">
+            <textarea 
+                id="message-input" 
+                placeholder="输入消息..." 
+                onkeydown="if(event.keyCode === 13 && !event.shiftKey) { event.preventDefault(); sendMessage(); }">
+            </textarea>
+            <button onclick="sendMessage()">发送</button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const messagesContainer = document.getElementById('chat-messages');
+        const messageInput = document.getElementById('message-input');
+        const onlineCount = document.getElementById('online-count');
+
+        // 连接到服务器
+        socket.on('connect', () => {
+            console.log('Connected to server');
+        });
+
+        // 接收在线用户数量更新
+        socket.on('online_users', (count) => {
+            onlineCount.textContent = count;
+        });
+
+        // 接收新消息
+        socket.on('message', (data) => {
+            addMessage(data, false);
+        });
+
+        function addMessage(data, isSent) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isSent ? 'sent' : ''}`;
+            
+            messageDiv.innerHTML = `
+                <div class="message-content">
+                    <div>${data.message}</div>
+                    <div class="message-meta">
+                        ${data.username} - ${new Date().toLocaleTimeString()}
+                    </div>
+                </div>
+            `;
+            
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function sendMessage() {
+            const message = messageInput.value.trim();
+            if (!message) return;
+
+            // 发送消息到服务器
+            socket.emit('message', {
+                message: message,
+                username: 'User' // 这里应该使用实际的用户名
+            });
+
+            // 在本地添加消息
+            addMessage({
+                message: message,
+                username: 'You'
+            }, true);
+
+            // 清空输入框
+            messageInput.value = '';
+        }
+    </script>
+</body>
+</html> 
